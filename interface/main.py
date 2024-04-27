@@ -17,8 +17,6 @@ from rag.rag_pipeline import build_retriever, retrieve
 from rag.utils.zoto_utils import initialize_zotero
 from rag.utils.zoto_utils import pull_paper_parallelized, initialize_zotero, get_paper_keys, get_meta_data
 from rag.utils.inference_utils import convert_to_latex
-
-
 import subprocess
 import streamlit as st
 

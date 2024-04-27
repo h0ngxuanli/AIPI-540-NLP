@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "start": "npm run build && npm run dev",
+    "start": "npx serve@latest out",
     "dev": "next dev",
     "build": "next build",
     "lint": "next lint"
