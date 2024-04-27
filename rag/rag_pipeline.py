@@ -13,10 +13,8 @@ sys.modules['sqlite3'] = sys.modules.pop('pysqlite3')
 import os
 import sys
 from pathlib import Path
-# import chromadb
 import shutil
 
-# sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from .utils.rag_utils import ChromaStore, add_elements, img_prompt_func, split_image_text_types, is_image_data
 from .utils.pdf_processor import extract_markdown, extract_image_table
 from .utils.summary_utils import summarize_figure_table, summarize_text, markdown_split, summarize_paper_context, extract_paper_title
@@ -24,10 +22,6 @@ from .utils.summary_utils import summarize_figure_table, summarize_text, markdow
 
 def build_retriever(zotero_key, paper_path = None, user_exist = True, update = False):
 
-    # if not os.path.exists(f"./attachments/{zotero_key}"):
-    # use customzied chromastore to store the docstroe
-    # create a new docstore for new user
-    # create a new vectorbase for new user
     if not user_exist:
         # create new docstore and vectore store
         client = chromadb.PersistentClient(path=f"./attachments/{zotero_key}")
