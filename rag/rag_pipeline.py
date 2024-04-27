@@ -43,7 +43,7 @@ def build_retriever(zotero_key, paper_path = None, user_exist = True, update = F
 
     # create retriever with vetorestore and docstore
     id_key = "doc_id"
-    cs = ChromaStore(f"/Users/lihongxuan/Desktop/AIPI/Courses/AIPI540/AIPI-540-NLP/ZotoMind/rag/attachments/{zotero_key}", "docstore")
+    cs = ChromaStore(f"rag/attachments/{zotero_key}", "docstore")
     vectorstore = PineconeVectorStore(index_name=f"zotomind-{zotero_key}", embedding=OpenAIEmbeddings())
     store = create_kv_docstore(cs)
     retriever = MultiVectorRetriever(

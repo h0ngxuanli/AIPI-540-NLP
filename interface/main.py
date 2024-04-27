@@ -1,20 +1,20 @@
-import streamlit as st
-from message_ui.st_chat_message import message
 import warnings
-import streamlit as st
 warnings.filterwarnings("ignore")
-from streamlit_pills import pills
 import os
-from message_ui.st_chat_message import message
 import sys
-from datetime import datetime
-import shutil
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+sys.path.append(os.path.dirname(os.path.abspath(__file__)))
+
+
+import streamlit as st
+from datetime import datetime
+from message_ui.st_chat_message import message
+from streamlit_pills import pills
+from message_ui.st_chat_message import message
 from rag.rag_pipeline import build_retriever, retrieve
 from rag.utils.zoto_utils import initialize_zotero
 from rag.utils.zoto_utils import pull_paper_parallelized, initialize_zotero, get_paper_keys, get_meta_data
 from rag.utils.inference_utils import convert_to_latex
-
 
 gradient_text_html = """
 <style>
@@ -35,7 +35,23 @@ st.caption("Dive into Zotero, Emerge with Answers and Insights.")
 model = "GPT-4"
 st.session_state["model"] = model
 
-with open("sidebar/styles.md", "r") as styles_file:
+
+
+# Initialize chat
+if "messages" not in st.session_state:
+    st.session_state.messages = [
+        {"role": "assistant", "content": "Welcome to ZotoMind, your smart companion in the world of Zotero! 📚✨"}
+    ]
+
+if "response" not in st.session_state:
+    st.session_state["response"] = None
+
+for id, message_text in enumerate(st.session_state.messages):
+    message(message_text["content"], is_user = True if message_text["role"] == "user" else False, key = id)
+
+
+
+with open("interface/sidebar/styles.md", "r") as styles_file:
     styles_content = styles_file.read()
 # st.sidebar.markdown(sidebar_content)
 st.write(styles_content, unsafe_allow_html=True)
@@ -83,18 +99,6 @@ if st.sidebar.button("Check Database"):
     else:
         st.session_state['db_status'] = '<p style="color: red;"><strong>You have not built your database</strong></p>'
     st.sidebar.markdown(st.session_state['db_status'], unsafe_allow_html=True)
-
-
-
-# Initialize chat
-if "messages" not in st.session_state:
-    st.session_state.messages = [
-        {"role": "assistant", "content": "Welcome to ZotoMind, your smart companion in the world of Zotero! 📚✨"}
-    ]
-    message(st.session_state.messages[0]["content"])
-
-if "response" not in st.session_state:
-    st.session_state["response"] = None
 
 
 
@@ -162,23 +166,13 @@ if st.sidebar.button("Updating Database") & (zotero_api_key is not None) & (libr
     st.session_state['db_status'] = f'<p style="color: green;"><strong>Database last updated on: {latest_time}</strong></p>'
     st.sidebar.markdown(st.session_state['db_status'], unsafe_allow_html=True)
 
-for message_text in st.session_state.messages:
-    message(message_text["content"], is_user = True if message_text["role"] == "user" else False)
 
 
 # get_paper_keys(zot)
 # get_meta_data(zot, key)
 
 
-# # get retriever
-# # use already existing Vector base
-retriever = build_retriever(
-                zotero_key = "10papers", 
-                paper_path = None,
-                user_exist = True, 
-                update = False
-                )
-# retriever  = build_retriever()
+
 
 
 # User input
@@ -188,6 +182,16 @@ if prompt := st.chat_input():
     if (not openai_api_key) or (not zotero_api_key):
         st.info("Please add your OpenAI API key to continue.")
         st.stop()
+
+    # # get retriever
+    # # use already existing Vector base
+    retriever = build_retriever(
+                    zotero_key = "10papers", 
+                    paper_path = None,
+                    user_exist = True, 
+                    update = False
+                    )
+    # retriever  = build_retriever()
 
     response, images = retrieve(retriever, prompt)
     response = convert_to_latex(response)

@@ -1,5 +1,10 @@
 # Multi-modal Local File Search & Recommendation Engine 
 
+## Resources
+- Youtube Link: https://www.youtube.com/watch?v=N9rPOchEAhc&t=1s
+- Deployed product: 
+- Slides: https://docs.google.com/presentation/d/1cNkXGMtD9vlQtVOGmrhtY7usKhHPov7ZltFdm4uy_QM/edit?usp=sharing
+
 ## Introduction
 This project is a multi-modal local file search and recommendation engine. It solves the problem of unintelligent file search and recommendation in current search engines on various operating systems, like Windows, Mac, and Linux. 
 
@@ -18,7 +23,7 @@ Also, if you want to search for images, audio, or video files, the current searc
 
 The repository is organized as follows, with each directory in the repository serving a specific purpose:
 
-- `Notebooks`: Contains python notebooks of experiments and specific parts of weaviate backend testing.
+- `interface`: Contains python notebooks of experiments and specific parts of weaviate backend testing.
 - `assets`: Contains assets for the project
 - `create_collections`: Contains the code for creating collections for different modalities of data.
 - `data`: Contains the data used in the project.
@@ -29,8 +34,8 @@ The repository is organized as follows, with each directory in the repository se
 - `app.py`: The main application file - launches streamlit application that interfaces with the dockerized weaviate container.
 - `docker-compose.yml`: The Docker Compose file for setting up the project environment on Windows.
 - `docker-compose_1.yml`: The Docker Compose file for setting up the project environment on Mac.
-- `requirementsc.txt`: The requirements file for the project.
-- `session_state.py`: A frontend helper script for app.py for managing session state in streamlit.
+- `requirements.txt`: The requirements file for the project.
+
 
 ## Overall Architecture
 
