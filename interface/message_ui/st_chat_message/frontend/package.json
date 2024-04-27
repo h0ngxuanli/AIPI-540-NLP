@@ -3,9 +3,9 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
+    "start": "npm run build && npm run dev",
     "dev": "next dev",
     "build": "next build",
-    "start": "npx serve@latest out",
     "lint": "next lint"
   },
   "dependencies": {

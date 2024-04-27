@@ -1,5 +1,7 @@
 import warnings
 warnings.filterwarnings("ignore")
+
+import subprocess
 import os
 import sys
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
@@ -15,6 +17,28 @@ from rag.rag_pipeline import build_retriever, retrieve
 from rag.utils.zoto_utils import initialize_zotero
 from rag.utils.zoto_utils import pull_paper_parallelized, initialize_zotero, get_paper_keys, get_meta_data
 from rag.utils.inference_utils import convert_to_latex
+
+
+import subprocess
+import streamlit as st
+
+def start_npm_dev():
+    # Define the command and directory
+    command = ["npm", "run", "dev"]
+    node_project_directory = "message_ui/st_chat_message/frontend"
+
+    # Start npm process
+    npm_process = subprocess.Popen(command, cwd=node_project_directory)
+
+    # Optionally, you can store the process handle if you need to interact with it later
+    return npm_process
+
+# Start the npm dev server when the script runs
+npm_process = start_npm_dev()
+
+
+
+
 
 gradient_text_html = """
 <style>
@@ -51,7 +75,7 @@ for id, message_text in enumerate(st.session_state.messages):
 
 
 
-with open("interface/sidebar/styles.md", "r") as styles_file:
+with open("sidebar/styles.md", "r") as styles_file:
     styles_content = styles_file.read()
 # st.sidebar.markdown(sidebar_content)
 st.write(styles_content, unsafe_allow_html=True)
