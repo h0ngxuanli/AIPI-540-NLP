@@ -1,7 +1,8 @@
-ZotoMind/rag/attachments/papers/*
-ZotoMind/interface/.github/*
-ZotoMind/interface/.streamlit/*
-ZotoMind/interface/.vscode/*
-ZotoMind/interface/icons/*
-ZotoMind/interface/rag/*
+rag/attachments/papers/*
+interface/.github/*
+interface/.streamlit/*
+interface/.vscode/*
+interface/icons/*
+interface/rag/*
+interface/st-chat-message/*
 

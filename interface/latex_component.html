@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.13.11/dist/katex.min.css" integrity="sha384-Um5gpz1odJg5Z4HAmWVt7XrhaTeT0E8JrJf+5/4eZLBmk/A5xMf6n3IoDLblUq1F" crossorigin="anonymous">
+  <script src="https://cdn.jsdelivr.net/npm/katex@0.13.11/dist/katex.min.js" crossorigin="anonymous"></script>
+</head>
+<body>
+  <div id="katex-render"></div>
+  <script>
+    window.onload = (event) => {
+      // Receive the LaTeX string from Python
+      window.streamlitEvents.addEventListener("render", (event) => {
+        const latexString = event.detail.args.latexString;
+        katex.render(latexString, document.getElementById('katex-render'), {
+          throwOnError: false
+        });
+      });
+    };
+  </script>
+</body>
+</html>
