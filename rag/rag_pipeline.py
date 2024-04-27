@@ -6,10 +6,14 @@ from langchain.retrievers.multi_vector import MultiVectorRetriever
 from langchain.storage._lc_store import create_kv_docstore
 from langchain_pinecone import PineconeVectorStore
 from pinecone import Pinecone, ServerlessSpec
+__import__('pysqlite3')
+import sys
+sys.modules['sqlite3'] = sys.modules.pop('pysqlite3')
+
 import os
 import sys
 from pathlib import Path
-import chromadb
+# import chromadb
 import shutil
 
 # sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
