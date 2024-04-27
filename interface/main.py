@@ -21,20 +21,11 @@ import subprocess
 import streamlit as st
 
 def start_npm_dev():
-    # Define the command and directory
     command = ["npm", "run", "dev"]
     node_project_directory = "message_ui/st_chat_message/frontend"
-
-    # Start npm process
     npm_process = subprocess.Popen(command, cwd=node_project_directory)
-
-    # Optionally, you can store the process handle if you need to interact with it later
     return npm_process
-
-# Start the npm dev server when the script runs
 npm_process = start_npm_dev()
-
-
 
 
 
@@ -75,7 +66,6 @@ for id, message_text in enumerate(st.session_state.messages):
 
 with open("sidebar/styles.md", "r") as styles_file:
     styles_content = styles_file.read()
-# st.sidebar.markdown(sidebar_content)
 st.write(styles_content, unsafe_allow_html=True)
 
 
@@ -102,10 +92,6 @@ openai_api_key = st.sidebar.text_input('', key='GPT-4 Key', type="password")
 if openai_api_key:
     st.sidebar.success('OpenAI API Key entered!')
     os.environ["OPENAI_API_KEY"] = openai_api_key
-
-
-# def update_db_status(latest_time):
-#     st.session_state['db_status'] = f'<p style="color: green;"><strong>Database last updated on: {latest_time}</strong></p> '
 
 if st.sidebar.button("Check Database"):
     if library_id:
@@ -157,20 +143,12 @@ if st.sidebar.button("Updating Database") & (zotero_api_key is not None) & (libr
     with open(f"./rag/attachments/{library_id}/latest_time.txt", 'w') as file:
         # Write the string to the file
         file.write(latest_time)
-
-
     
     sorted_keys, sorted_added_time = get_paper_keys(zot)
     papers = []
     for i in range(5):
         meta_data_info = get_meta_data(zot, sorted_keys[i])
         papers.append(meta_data_info)
-
-
-# papers = [
-#     {"title": "Understanding AI", "date": "2024-04-01", "authors": ["Alice Smith", "Bob Johnson"], "field": "Artificial Intelligence"},
-#     {"title": "Exploring Space", "date": "2024-03-15", "authors": ["Chris Doe"], "field": "Astronomy"}
-# ]
 
     markdown_string = "# Papers in your database\n"
     for paper in papers:
@@ -190,13 +168,6 @@ if st.sidebar.button("Updating Database") & (zotero_api_key is not None) & (libr
 
 
 
-# get_paper_keys(zot)
-# get_meta_data(zot, key)
-
-
-
-
-
 # User input
 if prompt := st.chat_input():
     st.session_state.messages.append({"role": "user", "content": prompt})
@@ -213,7 +184,6 @@ if prompt := st.chat_input():
                     user_exist = True, 
                     update = False
                     )
-    # retriever  = build_retriever()
 
     response, images = retrieve(retriever, prompt)
     response = convert_to_latex(response)
@@ -221,12 +191,6 @@ if prompt := st.chat_input():
     if len(images)!=0:
         response += ("\nThese images are for your reference: \n" +  
             "\n".join(['Paper Title: {}, <img width="80%" height="80%" src="data:image/jpeg;base64,{}" />'.format(image.metadata['title'], image.page_content) for image in images]))
-    
-    # from openai import OpenAI
-    # message(prompt, is_user=True)
-    # client = OpenAI(api_key=openai_api_key)
-    # response = client.chat.completions.create(model="gpt-3.5-turbo", messages=messages)
-
 
     st.session_state["response"] = response
     st.session_state.messages.append({"role": "assistant", "content": st.session_state["response"]})
