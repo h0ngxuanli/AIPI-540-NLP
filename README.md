@@ -1,4 +1,4 @@
-# Multi-modal Local File Search & Recommendation Engine 
+# ZotoMind - Dive into Zotero, Emerge with Answers and Insights.
 
 ## Resources
 - Youtube Link: https://www.youtube.com/watch?v=N9rPOchEAhc&t=1s
