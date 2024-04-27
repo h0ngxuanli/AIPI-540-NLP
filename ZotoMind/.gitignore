@@ -1,5 +1,5 @@
-ZotoMind/rag/attachments/papers
-ZotoMind/interface/.github/*/*
+ZotoMind/rag/attachments/papers/*
+ZotoMind/interface/.github/*
 ZotoMind/interface/.streamlit/*
 ZotoMind/interface/.vscode/*
 ZotoMind/interface/icons/*
