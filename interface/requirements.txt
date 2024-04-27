@@ -1,6 +1,5 @@
 chromadb==0.5.0
 PyMuPDF
-fitz==0.0.1.dev2
 fonttools==4.25.0
 ipython==8.12.3
 langchain==0.1.16
@@ -21,4 +20,3 @@ streamlit_pills==0.3.0
 torch==2.2.2
 typing_extensions==4.11.0
 pysqlite3-binary
-PyMuPDF
