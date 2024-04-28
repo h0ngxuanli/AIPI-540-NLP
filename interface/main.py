@@ -65,7 +65,7 @@ def main():
 
 
 
-    with open("./sidebar/styles.md", "r") as styles_file:
+    with open("interface/sidebar/styles.md", "r") as styles_file:
         styles_content = styles_file.read()
     st.write(styles_content, unsafe_allow_html=True)
 
