@@ -9,21 +9,13 @@ sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 
 from datetime import datetime
 # from message_ui.st_chat_message import message
-from st_chat_message import message
+# from st_chat_message import message
 from rag.rag_pipeline import build_retriever, retrieve
 from rag.utils.zoto_utils import initialize_zotero
 from rag.utils.zoto_utils import pull_paper_parallelized, initialize_zotero, get_paper_keys, get_meta_data
 from rag.utils.inference_utils import convert_to_latex
 import subprocess
 import streamlit as st
-
-def start_npm_dev():
-    """Start npm run dev and wait until it is ready."""
-    command = ["npm", "run", "dev"]
-    node_project_directory = "message_ui/st_chat_message/frontend"
-    # Start the npm process and capture its output
-    npm_process = subprocess.Popen(command, cwd=node_project_directory, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True)
-    return npm_process
 
 
 def main():
@@ -58,8 +50,10 @@ def main():
         st.session_state["response"] = None
 
     for id, message_text in enumerate(st.session_state.messages):
-        message(message_text["content"], is_user = True if message_text["role"] == "user" else False, key = id)
-
+        # message(message_text["content"], is_user = True if message_text["role"] == "user" else False, key = id)
+        st.chat_message(name = "user" if message_text["role"] == "user" else "assistant").markdown(message_text["content"])
+            
+            
 
 
     with open("interface/sidebar/styles.md", "r") as styles_file:
@@ -110,9 +104,12 @@ def main():
 
     if st.sidebar.button("Updating Database") & (zotero_api_key is not None) & (library_id is not None):
         st.session_state.messages.append({"role": "assistant", "content": "Start building database for your Zotero collections 💡 ... "})
+        st.chat_message(name = "assistant").markdown("Start building database for your Zotero collections 💡 ... ")
+        # message("Start building database for your Zotero collections 💡 ... ", is_user = False)
 
-        
-        message("Start building database for your Zotero collections 💡 ... ", is_user = False)
+
+
+
         zot = initialize_zotero(library_id = library_id, zotero_api_key = zotero_api_key, api_key = zotero_api_key)#"3WYiWAu8bLIX6pIo6IBhYkJs"
 
         if os.path.exists(f"./rag/attachments/{library_id}/") and len(os.listdir(f"./rag/attachments/{library_id}/"))!=0:
@@ -156,11 +153,14 @@ def main():
             markdown_string += f"- **Field**: {paper['tags']}\n\n"
 
         st.session_state.messages.append({"role": "assistant", "content": markdown_string})
-        message(markdown_string, is_user = False)
+        # message(markdown_string, is_user = False)
+        st.chat_message(name = "assistant").markdown(markdown_string)
 
         response = "Your database is all set 🥳!"
         st.session_state.messages.append({"role": "assistant", "content": response})
-        message(response, is_user = False)
+        # message(response, is_user = False)
+        st.chat_message(name = "assistant").markdown(response)
+
         st.session_state['db_status'] = f'<p style="color: green;"><strong>Database last updated on: {latest_time}</strong></p>'
         st.sidebar.markdown(st.session_state['db_status'], unsafe_allow_html=True)
 
@@ -169,7 +169,9 @@ def main():
     # User input
     if prompt := st.chat_input():
         st.session_state.messages.append({"role": "user", "content": prompt})
-        message(prompt, is_user=True)
+        # message(prompt, is_user=True)
+        st.chat_message(name = "user").markdown(prompt)
+
         if (not openai_api_key) or (not zotero_api_key):
             st.info("Please add your OpenAI API key to continue.")
             st.stop()
@@ -190,9 +192,11 @@ def main():
             response += ("\nThese images are for your reference: \n" +  
                 "\n".join(['Paper Title: {}, <img width="80%" height="80%" src="data:image/jpeg;base64,{}" />'.format(image.metadata['title'], image.page_content) for image in images]))
 
+
         st.session_state["response"] = response
-        st.session_state.messages.append({"role": "assistant", "content": st.session_state["response"]})
-        message(st.session_state["response"], is_user=False)
+        st.session_state.messages.append({"role": "assistant", "content": response})
+        # message(st.session_state["response"], is_user=False)
+        st.chat_message(name = "assistant").markdown(response)
 
 
 
