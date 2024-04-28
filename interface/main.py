@@ -17,7 +17,6 @@ from rag.utils.inference_utils import convert_to_latex
 import subprocess
 import streamlit as st
 
-
 def start_npm_dev():
     """Start npm run dev and wait until it is ready."""
     command = ["npm", "run", "dev"]
@@ -25,7 +24,6 @@ def start_npm_dev():
     # Start the npm process and capture its output
     npm_process = subprocess.Popen(command, cwd=node_project_directory, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True)
     return npm_process
-
 
 
 def main():
@@ -48,7 +46,6 @@ def main():
     st.caption("Dive into Zotero, Emerge with Answers and Insights.")
     model = "GPT-4"
     st.session_state["model"] = model
-
 
 
     # Initialize chat
