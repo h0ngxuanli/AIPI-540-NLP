@@ -60,7 +60,7 @@ def main():
 
 
     # Initialize sidebar
-    with open("sidebar/styles.md", "r") as styles_file:
+    with open("inference/sidebar/styles.md", "r") as styles_file:
         styles_content = styles_file.read()
     st.write(styles_content, unsafe_allow_html=True)
 
