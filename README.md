@@ -2,7 +2,7 @@
 
 ## Resources
 - Youtube Link: https://www.youtube.com/watch?v=N9rPOchEAhc&t=1s
-- Deployed product: still struggling...
+- Deployed product: https://mainpy-wsrcj8xqs64hyrajfzpjwe.streamlit.app (Use original chatbox style since I consistently failed to run developement environment for Node.js)
 - Slides: https://docs.google.com/presentation/d/1cNkXGMtD9vlQtVOGmrhtY7usKhHPov7ZltFdm4uy_QM/edit?usp=sharing
 
 ## Reference
