@@ -26,20 +26,6 @@ def nougat(image):
 								"output_scores":True}})
     return output['generated_text']
 
-# def query(payload):
-#     API_URL = "https://api-inference.huggingface.co/models/facebook/nougat-base"
-#     API_TOKEN = os.environ.get('HF_API_KEY')
-#     headers = {"Authorization": f"Bearer {API_TOKEN}"}
-#     response = requests.request("POST", API_URL, headers=headers, json=payload)
-#     return response.json()
-# def nougat(image):
-#     output = query({"inputs" : base64.b64encode(image).decode("utf-8") , 
-#                     "parameters" : {"max_new_tokens" : 3584}
-#                     })
-#     return output['generated_text']
-
-
-
 def rasterize_paper(
     pdf: Path,
     outpath: Optional[Path] = None,

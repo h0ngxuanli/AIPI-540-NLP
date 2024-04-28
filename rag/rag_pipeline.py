@@ -44,7 +44,6 @@ def build_retriever(zotero_key, paper_path = None, user_exist = True, update = F
 
     # create retriever with vetorestore and docstore
     id_key = "doc_id"
-
     cs = ChromaStore(f"../rag/attachments/database/{zotero_key}", "docstore")
     vectorstore = PineconeVectorStore(index_name=f"zotomind-{zotero_key.lower()}", embedding=OpenAIEmbeddings())
     store = create_kv_docstore(cs)
@@ -69,7 +68,6 @@ def build_retriever(zotero_key, paper_path = None, user_exist = True, update = F
             paper_context  = summarize_paper_context("\n".join(texts[:2]))
 
             # extract figrues and tables
-
             paper_name = paper.split(".")[0]
             images_path = f"../rag/attachments/images/{paper_name}"
 
@@ -77,7 +75,6 @@ def build_retriever(zotero_key, paper_path = None, user_exist = True, update = F
             _ = extract_image_table(file_path, images_path)
             tables, table_summaries, figures, figure_summaries = summarize_figure_table(images_path, paper_context)
             shutil.rmtree(images_path)
-
 
             retriever = add_elements(retriever=retriever, 
                                      elements=texts,
