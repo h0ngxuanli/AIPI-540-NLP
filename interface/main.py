@@ -109,14 +109,16 @@ def main():
 
     if st.sidebar.button("Check Database"):
 
+        # check library id type
         if library_id:
             try:
                 library_id = int(library_id)
             except:
                 st.info("Your Libray ID should be Integer!")
                 st.stop()
+            
         # check whether exist data and show status
-        if os.path.exists():
+        if os.path.exists(paper_dir):
             with open(Path(paper_dir)/"latest_time.txt", 'r') as file:
                 # Read the contents of the file
                 latest_time =  file.read()
