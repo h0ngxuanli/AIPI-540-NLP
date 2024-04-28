@@ -7,6 +7,8 @@ import sys
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 
+
+import pyzotero
 from datetime import datetime
 # from message_ui.st_chat_message import message
 # from st_chat_message import message
@@ -16,10 +18,16 @@ from rag.utils.zoto_utils import pull_paper_parallelized, initialize_zotero, get
 from rag.utils.inference_utils import convert_to_latex
 import subprocess
 import streamlit as st
+from pathlib import Path
+
+
 
 
 def main():
 
+    # Initialize title
+    user_exits = False
+    update = False
     gradient_text_html = """
     <style>
     .gradient-text {
@@ -56,20 +64,21 @@ def main():
             
 
 
-    with open("interface/sidebar/styles.md", "r") as styles_file:
+    # Initialize sidebar
+    with open("sidebar/styles.md", "r") as styles_file:
         styles_content = styles_file.read()
     st.write(styles_content, unsafe_allow_html=True)
 
 
     # Set API keys
+
+    # Zotero API Key
     st.sidebar.header('Zotero API Key🔑')
     zotero_api_key = st.sidebar.text_input('', key='Zotero Key', type="password")
     if zotero_api_key:
         st.sidebar.success('Zotero API Key entered!')
 
-        
-    os.environ['PINECONE_API_KEY'] = "5a727c08-72c8-4031-8d55-7b268c06c443"
-
+    # Zotero library ID
     st.sidebar.header('Zotero Library ID🗝️')
     library_id = st.sidebar.text_input('', key='Zotero Libr', type="password")
     if library_id:
@@ -79,19 +88,52 @@ def main():
     with st.sidebar:
         "[Get Your Zotero API Key & Library ID](https://www.zotero.org/settings/keys)"
 
-    st.sidebar.header('GPT-4 Key🔑')
+    # GPT4 key
+    st.sidebar.header('GPT-4 API Key🔑')
     openai_api_key = st.sidebar.text_input('', key='GPT-4 Key', type="password")
     if openai_api_key:
         st.sidebar.success('OpenAI API Key entered!')
         os.environ["OPENAI_API_KEY"] = openai_api_key
 
-    if st.sidebar.button("Check Database"):
-        if library_id:
-            library_id = int(library_id)
+    # Huggingface key
+    st.sidebar.header('HuggingFace API Key🤗')
+    hf_api_key = st.sidebar.text_input('', key='HF Key', type="password")
+    if  hf_api_key:
+        st.sidebar.success('HuggingFace API Key entered!')
+        os.environ["HF_API_KEY"] = hf_api_key
 
-        # check whether exist data
-        if os.path.exists(f"./rag/attachments/{library_id}/"):
-            with open(f"./rag/attachments/{library_id}/latest_time.txt", 'r') as file:
+    # Pinecone key
+    st.sidebar.header('PineCone API Key🌰')
+    pinecone_api_key = st.sidebar.text_input('', key='PineCone Key', type="password")
+    if  pinecone_api_key:
+        st.sidebar.success('PineCone API Key!')
+        os.environ["PINECONE_API_KEY"] = pinecone_api_key
+
+
+    from dotenv import load_dotenv
+    load_dotenv()  # take environment variables from .env.
+    os.environ["OPENAI_API_KEY"] = os.getenv("OPENAI_API_KEY")
+    os.environ["HF_API_KEY"] = os.getenv("HF_API_KEY")
+    os.environ["PINECONE_API_KEY"] = os.getenv("PINECONE_API_KEY")
+
+
+
+    # check whether database is the latest one
+    paper_dir = f"../rag/attachments/papers/{zotero_api_key}/"
+    database_dir = f"../rag/attachments/database/{zotero_api_key}/"
+
+    if st.sidebar.button("Check Database"):
+
+        if library_id:
+            try:
+                library_id = int(library_id)
+            except:
+                st.info("Your Libray ID should be Integer!")
+                st.stop()
+
+        # check whether exist data and show status
+        if os.path.exists():
+            with open(f"../rag/attachments/papers/{zotero_api_key}/latest_time.txt", 'r') as file:
                 # Read the contents of the file
                 latest_time =  file.read()
             latest_time = datetime.strptime(latest_time, '%Y-%m-%dT%H:%M:%SZ').strftime("%Y-%m-%d")
@@ -101,44 +143,53 @@ def main():
         st.sidebar.markdown(st.session_state['db_status'], unsafe_allow_html=True)
 
 
-
+    # pull the latest papers and register them into vector database
     if st.sidebar.button("Updating Database") & (zotero_api_key is not None) & (library_id is not None):
+
+
         st.session_state.messages.append({"role": "assistant", "content": "Start building database for your Zotero collections 💡 ... "})
         st.chat_message(name = "assistant").markdown("Start building database for your Zotero collections 💡 ... ")
         # message("Start building database for your Zotero collections 💡 ... ", is_user = False)
 
+        zot = initialize_zotero(library_id = library_id, api_key = zotero_api_key)
+  
 
-
-
-        zot = initialize_zotero(library_id = library_id, zotero_api_key = zotero_api_key, api_key = zotero_api_key)#"3WYiWAu8bLIX6pIo6IBhYkJs"
-
-        if os.path.exists(f"./rag/attachments/{library_id}/") and len(os.listdir(f"./rag/attachments/{library_id}/"))!=0:
-            
-            with open(f"./rag/attachments/{library_id}/latest_time.txt", 'r') as file:
-                # Read the contents of the file
+        if os.path.exists(database_dir):
+            user_exits = True
+            with open(Path(paper_dir)/"latest_time.txt", 'r') as file:
                 latest_time =  file.read()
 
             try:
-                # shutil.rmtree(f"./rag/attachments/{library_id}/")
+                update = True
                 latest_time = pull_paper_parallelized(zot, 
-                                        file_path = f"./rag/attachments/{library_id}/", 
+                                        file_path = paper_dir, 
                                         num_processes = 5, 
                                         latest_time = latest_time)
-            except:
+            except pyzotero.zotero_errors.UserNotAuthorised:
+                st.error("Your Zotero Key is Wrong!")
+                st.stop()
+
+            except Exception as e:
                 latest_time = latest_time 
         
         else:
-            os.mkdir(f"./rag/attachments/{library_id}/")
+            user_exits = False
+            update = False
+            if not os.path.exists(paper_dir):
+                os.mkdir(paper_dir)
+            
             latest_time = pull_paper_parallelized(zot, 
-                                    file_path = f"./rag/attachments/{library_id}/", 
+                                    file_path = paper_dir, 
                                     num_processes = 5, 
                                     latest_time = None)
             
         # update latest time
-        with open(f"./rag/attachments/{library_id}/latest_time.txt", 'w') as file:
+        with open(f"../rag/attachments/papers/{zotero_api_key}/latest_time.txt", 'w') as file:
             # Write the string to the file
             file.write(latest_time)
         
+
+        # print the paper that needed to be updated
         sorted_keys, sorted_added_time = get_paper_keys(zot)
         papers = []
         for i in range(5):
@@ -152,6 +203,9 @@ def main():
             markdown_string += f"- **Authors**: {', '.join(paper['creators'])}\n"
             markdown_string += f"- **Field**: {paper['tags']}\n\n"
 
+
+
+    # start building retriever
         st.session_state.messages.append({"role": "assistant", "content": markdown_string})
         # message(markdown_string, is_user = False)
         st.chat_message(name = "assistant").markdown(markdown_string)
@@ -161,9 +215,33 @@ def main():
         # message(response, is_user = False)
         st.chat_message(name = "assistant").markdown(response)
 
+        response = "Start building a unique ZotoMind for uuuu 🧠!"
+        st.session_state.messages.append({"role": "assistant", "content": response})
+        st.chat_message(name = "assistant").markdown(response)
+
+        
+        if zotero_api_key == "3WYiWAu8bLIX6pIo6IBhYkJs":
+            retriever = build_retriever(
+                            zotero_key = "10papers", 
+                            paper_path = None,
+                            user_exist = True, 
+                            update = False
+                            )
+        else:
+            retriever = build_retriever(
+                zotero_key = zotero_api_key, 
+                paper_path = f"../rag/attachments/papers/{zotero_api_key}",
+                user_exist = user_exits, 
+                update = update
+                )
+            
+        st.session_state["retriever"] = retriever
+
+        response = "Let's dive into Zotero 🤿!"
+        st.session_state.messages.append({"role": "assistant", "content": response})
+        st.chat_message(name = "assistant").markdown(response)
         st.session_state['db_status'] = f'<p style="color: green;"><strong>Database last updated on: {latest_time}</strong></p>'
         st.sidebar.markdown(st.session_state['db_status'], unsafe_allow_html=True)
-
 
 
     # User input
@@ -173,19 +251,10 @@ def main():
         st.chat_message(name = "user").markdown(prompt)
 
         if (not openai_api_key) or (not zotero_api_key):
-            st.info("Please add your OpenAI API key to continue.")
+            st.info("Please add your API keys to continue.")
             st.stop()
 
-        # # get retriever
-        # # use already existing Vector base
-        retriever = build_retriever(
-                        zotero_key = "10papers", 
-                        paper_path = None,
-                        user_exist = True, 
-                        update = False
-                        )
-
-        response, images = retrieve(retriever, prompt)
+        response, images = retrieve(st.session_state["retriever"], prompt)
         response = convert_to_latex(response)
 
         if len(images)!=0:
@@ -197,8 +266,6 @@ def main():
         st.session_state.messages.append({"role": "assistant", "content": response})
         # message(st.session_state["response"], is_user=False)
         st.chat_message(name = "assistant").markdown(response)
-
-
 
 
 if __name__ == "__main__":

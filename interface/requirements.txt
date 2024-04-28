@@ -22,3 +22,4 @@ torch==2.2.2
 typing_extensions==4.11.0
 pysqlite3-binary
 st-chat-message
+dotenv

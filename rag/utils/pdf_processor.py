@@ -4,11 +4,12 @@ import fitz
 from pathlib import Path
 import requests
 import base64
+import os
 from langchain_community.document_loaders import UnstructuredPDFLoader
 
 def query(payload):
 	API_URL = "https://k05w2if7y9368qct.us-east-1.aws.endpoints.huggingface.cloud"
-	API_TOKEN = "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"
+	API_TOKEN = os.environ.get('HF_API_KEY')
 	headers = {
 		"Accept" : "application/json",
 		"Authorization": f"Bearer {API_TOKEN}",
@@ -16,6 +17,28 @@ def query(payload):
 	}
 	response = requests.post(API_URL, headers=headers, json=payload)
 	return response.json()
+
+def nougat(image):
+    output = query({"inputs":base64.b64encode(image).decode("utf-8"), 
+					"fix_markdown":True,
+					"parameters": {"max_new_tokens" : 3584, 
+								"return_dict_in_generate":True, 
+								"output_scores":True}})
+    return output['generated_text']
+
+# def query(payload):
+#     API_URL = "https://api-inference.huggingface.co/models/facebook/nougat-base"
+#     API_TOKEN = os.environ.get('HF_API_KEY')
+#     headers = {"Authorization": f"Bearer {API_TOKEN}"}
+#     response = requests.request("POST", API_URL, headers=headers, json=payload)
+#     return response.json()
+# def nougat(image):
+#     output = query({"inputs" : base64.b64encode(image).decode("utf-8") , 
+#                     "parameters" : {"max_new_tokens" : 3584}
+#                     })
+#     return output['generated_text']
+
+
 
 def rasterize_paper(
     pdf: Path,
@@ -58,13 +81,6 @@ def rasterize_paper(
     if return_pil:
         return pillow_images
 
-def nougat(image):
-    output = query({"inputs":base64.b64encode(image).decode("utf-8"), 
-					"fix_markdown":True,
-					"parameters": {"max_new_tokens" : 3584, 
-								"return_dict_in_generate":True, 
-								"output_scores":True}})
-    return output['generated_text']
 
 def extract_markdown(filepath):
     results = []

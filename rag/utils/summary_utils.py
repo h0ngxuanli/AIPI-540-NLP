@@ -30,8 +30,6 @@ Give a concise and precise summary of the image that is well optimized for retri
         base64_image_data = self.base64_encode_image()
         chat = ChatOpenAI(model="gpt-4-vision-preview", max_tokens=1000)
 
-        # gpt4 vision api doc - https://platform.openai.com/docs/guides/vision
-
         response = chat.invoke(
             [
                 HumanMessage(
@@ -76,8 +74,6 @@ def summarize_figure_table(images_path, paper_context):
             elif img_file.startswith("figure"):
                 figure_data_list.append(data)
                 figure_summary_list.append(summary)
-    print(len(table_data_list))
-    print("*"*20)
     return table_data_list, table_summary_list, figure_data_list, figure_summary_list
 
 
@@ -131,10 +127,12 @@ def markdown_split(texts):
 
 
 def extract_paper_title(texts):
-    print(texts[0])
-    title = np.array(texts[0].split("\n"))
-    title = title[title != ""][0]
+    if len(texts) == 0:
+        return "No Title"
+    else:
+        title = np.array(texts[0].split("\n"))
+        title = title[title != ""][0]
 
-    title = np.array(title.split("#"))
-    title = title[title != ""][0]
-    return title
+        title = np.array(title.split("#"))
+        title = title[title != ""][0]
+        return title

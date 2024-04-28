@@ -5,4 +5,5 @@ interface/.vscode/*
 interface/icons/*
 interface/rag/*
 interface/st-chat-message/*
+interface/.env/*
 
