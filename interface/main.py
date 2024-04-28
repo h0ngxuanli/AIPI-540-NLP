@@ -151,15 +151,15 @@ def main():
 
             except Exception as e:
                 latest_time = latest_time 
-        else:
-            user_exits = False
-            update = False
-            os.mkdir(paper_dir)
+        # else:
+        #     user_exits = False
+        #     update = False
+        #     os.mkdir(paper_dir)
             
-            latest_time = pull_paper_parallelized(zot, 
-                                    file_path = paper_dir, 
-                                    num_processes = 5, 
-                                    latest_time = None)
+        #     latest_time = pull_paper_parallelized(zot, 
+        #                             file_path = paper_dir, 
+        #                             num_processes = 5, 
+        #                             latest_time = None)
             
         # update latest time
         with open(f"../rag/attachments/papers/{zotero_api_key}/latest_time.txt", 'w') as file:
