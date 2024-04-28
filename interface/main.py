@@ -104,11 +104,10 @@ def main():
         os.environ["PINECONE_API_KEY"] = pinecone_api_key
 
     # check whether database is the latest one
-    paper_dir = f"../rag/attachments/papers/{zotero_api_key}/"
-    database_dir = f"../rag/attachments/database/{zotero_api_key}/"
+    
 
     if st.sidebar.button("Check Database"):
-
+        paper_dir = f"../rag/attachments/papers/{zotero_api_key}/"
         # check library id type
         if library_id:
             try:
@@ -135,6 +134,7 @@ def main():
         st.chat_message(name = "assistant").markdown("Start building database for your Zotero collections 💡 ... ")
         zot = initialize_zotero(library_id = library_id, api_key = zotero_api_key)
 
+        paper_dir = f"../rag/attachments/papers/{zotero_api_key}/"
         if os.path.exists(paper_dir):
             user_exits = True
             with open(Path(paper_dir)/"latest_time.txt", 'r') as file:
@@ -151,7 +151,6 @@ def main():
 
             except Exception as e:
                 latest_time = latest_time 
-        
         else:
             user_exits = False
             update = False
