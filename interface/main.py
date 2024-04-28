@@ -7,25 +7,15 @@ import sys
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 
-
-import streamlit as st
 from datetime import datetime
-from message_ui.st_chat_message import message
-from streamlit_pills import pills
-from message_ui.st_chat_message import message
+# from message_ui.st_chat_message import message
+from st_chat_message import message
 from rag.rag_pipeline import build_retriever, retrieve
 from rag.utils.zoto_utils import initialize_zotero
 from rag.utils.zoto_utils import pull_paper_parallelized, initialize_zotero, get_paper_keys, get_meta_data
 from rag.utils.inference_utils import convert_to_latex
 import subprocess
 import streamlit as st
-
-# def start_npm_dev():
-#     command = ["npm", "run", "dev"]
-#     node_project_directory = "message_ui/st_chat_message/frontend"
-#     npm_process = subprocess.Popen(command, cwd=node_project_directory)
-#     return npm_process
-# npm_process = start_npm_dev()
 
 
 def start_npm_dev():
@@ -212,11 +202,4 @@ def main():
 
 if __name__ == "__main__":
 
-    npm_process = start_npm_dev()
     main()
-    # import atexit
-    # def on_exit():
-    #     npm_process.terminate()
-    #     npm_process.wait()
-
-    # atexit.register(on_exit)
