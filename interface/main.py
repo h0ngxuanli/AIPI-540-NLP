@@ -135,22 +135,23 @@ def main():
         zot = initialize_zotero(library_id = library_id, api_key = zotero_api_key)
 
         paper_dir = f"../rag/attachments/papers/{zotero_api_key}/"
-        if os.path.exists(paper_dir):
-            user_exits = True
-            with open(Path(paper_dir)/"latest_time.txt", 'r') as file:
-                latest_time =  file.read()
-            try:
-                update = True
-                latest_time = pull_paper_parallelized(zot, 
-                                        file_path = paper_dir, 
-                                        num_processes = 5, 
-                                        latest_time = latest_time)
-            except pyzotero.zotero_errors.UserNotAuthorised:
-                st.error("Your Zotero Key is Wrong!")
-                st.stop()
 
-            except Exception as e:
-                latest_time = latest_time 
+        # if os.path.exists(paper_dir):
+        #     user_exits = True
+        #     with open(Path(paper_dir)/"latest_time.txt", 'r') as file:
+        #         latest_time =  file.read()
+        #     try:
+        #         update = True
+        #         latest_time = pull_paper_parallelized(zot, 
+        #                                 file_path = paper_dir, 
+        #                                 num_processes = 5, 
+        #                                 latest_time = latest_time)
+        #     except pyzotero.zotero_errors.UserNotAuthorised:
+        #         st.error("Your Zotero Key is Wrong!")
+        #         st.stop()
+
+        #     except Exception as e:
+        #         latest_time = latest_time 
         # else:
         #     user_exits = False
         #     update = False
@@ -161,9 +162,9 @@ def main():
         #                             num_processes = 5, 
         #                             latest_time = None)
             
-        # update latest time
-        with open(f"../rag/attachments/papers/{zotero_api_key}/latest_time.txt", 'w') as file:
-            file.write(latest_time)
+        # # update latest time
+        # with open(f"../rag/attachments/papers/{zotero_api_key}/latest_time.txt", 'w') as file:
+        #     file.write(latest_time)
         
         # print the paper that needed to be updated
         sorted_keys, sorted_added_time = get_paper_keys(zot)
@@ -215,8 +216,8 @@ def main():
         response = "Let's dive into Zotero 🤿!"
         st.session_state.messages.append({"role": "assistant", "content": response})
         st.chat_message(name = "assistant").markdown(response)
-        st.session_state['db_status'] = f'<p style="color: green;"><strong>Database last updated on: {latest_time}</strong></p>'
-        st.sidebar.markdown(st.session_state['db_status'], unsafe_allow_html=True)
+        # st.session_state['db_status'] = f'<p style="color: green;"><strong>Database last updated on: {latest_time}</strong></p>'
+        # st.sidebar.markdown(st.session_state['db_status'], unsafe_allow_html=True)
 
 
     # User input
