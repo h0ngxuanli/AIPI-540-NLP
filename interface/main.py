@@ -134,7 +134,8 @@ def main():
         st.session_state.messages.append({"role": "assistant", "content": "Start building database for your Zotero collections 💡 ... "})
         st.chat_message(name = "assistant").markdown("Start building database for your Zotero collections 💡 ... ")
         zot = initialize_zotero(library_id = library_id, api_key = zotero_api_key)
-        if os.path.exists(database_dir):
+
+        if os.path.exists(paper_dir):
             user_exits = True
             with open(Path(paper_dir)/"latest_time.txt", 'r') as file:
                 latest_time =  file.read()
@@ -154,8 +155,7 @@ def main():
         else:
             user_exits = False
             update = False
-            if not os.path.exists(paper_dir):
-                os.mkdir(paper_dir)
+            os.mkdir(paper_dir)
             
             latest_time = pull_paper_parallelized(zot, 
                                     file_path = paper_dir, 
